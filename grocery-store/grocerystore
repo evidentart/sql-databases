@@ -1,1 +1,23 @@
+# Project Name: Drop The Tables
+
+## Description:
+This project involves the creation of SQL tables for managing various aspects of a retail business, including suppliers, departments, products, employees, customers, order details, and sale information. The SQL script also includes sample data insertion for the created tables.
+
+## Tables:
+1. Address
+2. Supplier
+3. Department
+4. Product
+5. SupplierProduct
+6. Employee
+7. Customer
+8. Order_Detail
+9. Sale_Info
+
+## SQL Queries:
+The script also includes various SQL queries for displaying, updating, and inserting data into the tables.
+
+## API Endpoints:
+This project does not appear to involve API endpoints as it is focused on SQL table creation and data manipulation.
+
 
