@@ -1,1 +1,57 @@
+# Database README
+
+## Introduction
+This database is designed to manage customer information, parking zones, vehicles, messages, parking sessions, and transactions.
+
+## Schema
+The database consists of the following tables:
+- `customer`: Manages customer information
+- `zone`: Stores information about parking zones
+- `vehicle`: Manages vehicle details
+- `message`: Stores customer messages
+- `parkingSession`: Records parking sessions
+- `transaction`: Manages transaction details
+
+## SQL Statements
+Includes various procedures and functions for maintaining the databases.
+
+# Feature 1
+
+The `create_or_update_customer` procedure is designed to either create a new customer or update an existing customer based on the provided phone number. It takes in the customer's name, phone number, address, state, zip code, email, and credit card number as input parameters.
+
+# Feature 2
+
+The `add_vehicle` function is used to add a new vehicle to the system. It takes in the vehicle's plate number, plate state, customer ID, vehicle make, model, year, and color as input parameters. If the vehicle with the provided plate number and state does not exist, it will be added to the system and the function will return the new vehicle ID. If the customer ID is invalid, the function will return -1.
+
+# Feature 3
+
+The `search_parking_zone` procedure is designed to search for available parking zones based on the provided zip code, start time, and end time. It counts the number of available zones and outputs the details of each available zone if any are found.
+
+# Feature 4
+
+The `get_parking_sessions` procedure retrieves and displays parking sessions for a specific customer within the specified period. It also calculates and displays the total charge for the customer.
+
+# Feature 5
+
+The `list_active_sessions_at_zone` procedure lists all vehicles with an active session at a specified parking zone based on the provided zone ID and current time.
+
+# Feature 6
+
+The `start_session` procedure is used to start a parking session for a customer's vehicle at a specified parking zone. It checks for the validity of the customer, vehicle, and zone IDs, as well as the session start time and parking length.
+
+# Feature 7
+
+The `extend_session` procedure extends the end time of a parking session and calculates the total charge for the extended period. It also inserts a message into the message table and a row into the payment table.
+
+# Feature 8
+
+The `stop_session` procedure is responsible for stopping a parking session. It updates the end time of the session and inserts a message into the message table.
+
+# Feature 9
+
+The `create_reminder` procedure generates a reminder for parking sessions that are set to expire within 15 minutes based on the current time.
+
+# Feature 10
+
+The `statistics` procedure provides various statistics related to customers, vehicles, parking zones, parking sessions, and revenue within a specified date range.
 
