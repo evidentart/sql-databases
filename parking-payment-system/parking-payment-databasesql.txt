@@ -1,0 +1,120 @@
+DROP TABLE transaction CASCADE CONSTRAINTS;
+DROP TABLE parkingSession CASCADE CONSTRAINTS;
+DROP TABLE message CASCADE CONSTRAINTS;
+DROP TABLE vehicle CASCADE CONSTRAINTS;
+DROP TABLE zone CASCADE CONSTRAINTS;
+DROP TABLE customer CASCADE CONSTRAINTS;
+
+
+create table customer (
+	custid int NOT NULL,
+	c_name varchar(20),
+	c_address varchar(100),
+	c_zip VARCHAR(5),
+	c_state varchar(20),
+	c_email varchar(30),
+	c_phoneNum varchar(20),
+	c_paymentNum LONG NOT NULL,
+	Primary key (custid)
+);
+
+create table zone(
+	zid int NOT NULL,
+	z_address varchar(40),
+	z_zipcode VARCHAR(5),
+	z_capacity int, 
+	z_avblSlot int,
+	z_hrRate Decimal (5,2),
+	z_maxParkingLength Decimal (5,2),
+   	start_dayOfWeek int,   --(1 = Sunday, 2 = Monday, ..... 7 = Saturday)
+   	 start_time TIMESTAMP, 
+  	  endDayOfWeek int, --(1 = Sunday, 2 = Monday, ..... 7 = Saturday)
+   	end_time TIMESTAMP(2),
+   	Primary key (zid)
+);
+
+	create table vehicle(
+		Vid int NOT NULL,
+		Custid int,
+		V_platenum varchar(20),
+		V_state varchar(30),
+		V_maker varchar(30),
+		V_model varchar(20),
+		V_year int,
+		V_color varchar(20),
+		Primary key(vid),
+		Foreign key (custid) references customer
+);
+
+	create table message (
+ 	 	mid INT NOT NULL,
+   		 customer_id int,
+   		 message_time timestamp,
+  		 message_body varchar(100),
+ Primary Key (mid),
+  		 foreign key (customer_id) references customer (custid)
+);
+
+
+	create table parkingSession (
+		Seid INT NOT NULL,
+  		custid INT,
+  		vid INT,
+ 		zid INT,
+		start_timeSession TIMESTAMP(1),
+		end_timeSession TIMESTAMP(1),
+		Total_charge Decimal (5,2),
+ 		Primary key(seid),
+  		Foreign key(custid) REFERENCES customer(custid),
+ 		Foreign key(vid) REFERENCES vehicle(vid),
+  		Foreign key(zid) REFERENCES zone(zid)
+);
+
+	create table transaction(
+		payment_id INT NOT NULL,
+		Seid INT,
+		Payment_time TIMESTAMP,
+		Payment_amount Decimal (5,2),
+		hrs_payCover Decimal (5,2),
+ 		PRIMARY KEY(payment_id),
+   		FOREIGN KEY(seid) REFERENCES parkingSession(seid)
+	);
+
+	CREATE SEQUENCE customer_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE zone_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE vehicle_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE message_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE parkingSession_seq START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE transaction_seq START WITH 1 INCREMENT BY 1;
+
+	
+
+
+INSERT INTO customer VALUES (1, 'Bob', '4420 Hamilton Ave', '21212', 'Maryland', 'bob21@gmail.com', '912-552-2499', 125152195821750); 
+INSERT INTO customer VALUES (2, 'Vinny', '320 Medfield Pl', '14521', 'Virginia', 'vinY@msn.com', '520-534-0021', 564247795285771); 
+INSERT INTO customer VALUES (3, 'Jack', '50 Clover Ave', '21112', 'Maryland', 'jack99@yahoo.com', '410-629-9912', 821152829961750); 
+INSERT INTO customer VALUES (4, 'Fiona', 'Suite 880 2651 Smith Drive', '24992', 'New York', 'f21@outlook.com', '510-521-6800', 631177009961750); 
+
+INSERT INTO zone VALUES(5, 'Common Garage', '25336', 15, 5, 2.00, 3.00 , 2, '04-DEC-23 07:00:00', 6, '08-DEC-23 07:00:00');
+INSERT INTO zone VALUES( 6, 'Admin Garage', '14205', 10, 2, 5.00, 2.00, 7, '09-DEC-23 12:00:00', 1, '10-DEC-23 09:00:00');
+INSERT INTO zone VALUES( 7, 'Stadium Lot', '42521', 25, 0, 4.00, 5.00, 2, '11-DEC-23 09:00:00', 6, '15-JUN-23 06:00:00');
+
+INSERT INTO vehicle VALUES (8, 1,  '6FG-5213', 'MD', 'Honda', 'Accord', 2020,'Gray');
+INSERT INTO vehicle VALUES (9, 2, '2AC-6211', 'NY', 'BMW', 'M5', 2023, 'Black');
+INSERT INTO vehicle VALUES (10, 3, '8PA-6233', 'MD', 'Toyota', 'Corolla', 2008, 'White');
+INSERT INTO vehicle VALUES (11, 4, 'ABU-0501', 'NY', 'Audi', 'A2', 2022, 'Blue');
+
+INSERT INTO message VALUES (12, 1, '01-FEB-23 04:23:47.125', 'It was very difficult to find parking space');
+INSERT INTO message VALUES (13, 2,'26-MAY-23 12:44:34.234', 'Very nice parking lot' );
+INSERT INTO message VALUES (14, 3,'15-JAN-23 10:21:15', 'When will the upper floor open? Thanks!');
+INSERT INTO message VALUES (15, 4,'09-DEC-23 11:00:42', 'Very convenient!!!');
+
+INSERT INTO parkingSession VALUES(16, 1, 8, 5, '04-DEC-23 07:00:00', '04-DEC-23 10:00:00', 36.00);
+INSERT INTO parkingSession VALUES(17, 2, 9, 6, '09-DEC-23 01:55:54', '09-DEC-23 05:01:00', 61.00);
+INSERT INTO parkingSession VALUES(18, 3, 10, 7, '12-DEC-23 09:26:53', '12-DEC-23 11:25:29', 11.06);
+INSERT INTO parkingSession VALUES(19, 4, 11, 7, '13-DEC-23 04:15:02', '13-DEC-23 06:55.25', 16.80);
+
+INSERT INTO transaction VALUES(20, 16,'04-DEC-23 07:00:00', 36.00, 3.00);
+INSERT INTO transaction VALUES(21, 17,'09-DEC-23 01:55:54', 61.00, 3.08);
+INSERT INTO transaction VALUES(22, 18,'12-DEC-23 09:26:53', 11.06, 1.58);
+INSERT INTO transaction VALUES(23, 19,'13-DEC-23 04:15:02', 16.80, 2.40);
