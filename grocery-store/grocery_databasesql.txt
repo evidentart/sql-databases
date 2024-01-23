@@ -1,0 +1,251 @@
+--DROP THE TABLES
+DROP TABLE Sale_Info;
+DROP TABLE Order_Detail;
+DROP TABLE Employee;
+DROP TABLE SupplierProduct;
+DROP TABLE Customer;
+DROP TABLE Product;
+DROP TABLE Department;
+DROP TABLE Supplier;
+DROP TABLE Address;
+
+-- CREATE THE TABLES
+CREATE TABLE Address (                  
+    address_id INT NOT NULL,
+    street_name VARCHAR(200),
+    state_name VARCHAR(20),
+    state_area_code CHAR(20),
+    PRIMARY KEY (address_id)
+    );
+    
+ CREATE TABLE Supplier (                    
+    sup_id INT NOT NULL,
+    address_id INT,
+    sup_name VARCHAR(50),
+    sup_number CHAR(20),
+    sup_fax CHAR(20),
+    product_type VARCHAR(50),
+    PRIMARY KEY (sup_id),
+    FOREIGN KEY (address_id) REFERENCES Address (address_id)
+    );   
+    
+    CREATE TABLE Department (          
+    dep_id INT NOT NULL,
+    dep_name VARCHAR(50),
+    dep_description VARCHAR(250),
+    PRIMARY KEY (dep_id)
+    );    
+    
+    CREATE TABLE Product (                  
+    product_id INT NOT NULL,
+    dep_id INT,
+    sup_id INT,
+    product_name VARCHAR(50),
+    unit_list_price NUMBER,
+    unit_in_stock NUMBER,
+    PRIMARY KEY (product_id),
+    FOREIGN KEY (dep_id) REFERENCES Department (dep_id),
+    FOREIGN KEY (sup_id) REFERENCES Supplier (sup_id)
+    );    
+    
+CREATE TABLE SupplierProduct (         
+    sup_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity_received NUMBER,
+    sup_prod_name VARCHAR(50),
+    sup_transactionDate DATE,
+    FOREIGN KEY (sup_id) REFERENCES Supplier (sup_id),
+    FOREIGN KEY (product_id) REFERENCES Product (product_id)
+    );
+
+CREATE TABLE Employee (                     
+    emp_id INT NOT NULL,
+    address_id INT,
+    dep_id INT,
+    emp_fname VARCHAR(50),
+    emp_last VARCHAR(50),
+    emp_email VARCHAR(200),
+    emp_dob DATE,
+    emp_hireDate DATE,
+    PRIMARY KEY (emp_id),
+    FOREIGN KEY (dep_id) REFERENCES Department (dep_id),
+    FOREIGN KEY (address_id) REFERENCES Address (address_id)
+    );
+
+CREATE TABLE Customer (          
+    cust_id INT NOT NULL,
+    address_id INT,
+    cust_fname VARCHAR(50),
+    cust_last VARCHAR(50),
+    cust_dob DATE,
+    PRIMARY KEY (cust_id),
+    FOREIGN KEY (address_id) REFERENCES Address (address_id)
+    );
+    
+CREATE TABLE Order_Detail (           
+    order_id INT NOT NULL,
+    cust_id INT,
+    emp_id INT,
+    product_ID INT,
+    total_amount NUMBER,
+    order_date DATE,
+    PRIMARY KEY (order_id),
+    FOREIGN KEY (cust_id) REFERENCES Customer (cust_id),
+    FOREIGN KEY (emp_id) REFERENCES Employee (emp_id),
+    FOREIGN KEY (product_id) REFERENCES Product (product_id)
+    );
+    
+CREATE TABLE Sale_Info (       
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity_sold NUMBER,
+    transaction_date DATE,
+    FOREIGN KEY (order_id) REFERENCES Order_Detail (order_id),
+    FOREIGN KEY (product_id) REFERENCES Product (product_id)
+    );
+    
+
+--DISPLAY TABLES
+SELECT * FROM Customer;
+SELECT * FROM Employee;      
+SELECT * FROM Order_Detail;    
+SELECT * FROM Sale_Info;    
+SELECT * FROM Address;
+SELECT * FROM Department;
+SELECT * FROM Product;
+SELECT * FROM SupplierProduct;
+SELECT * FROM Supplier;    
+
+
+
+SELECT Supplier.sup_id, sup_name, product_type, quantity_received
+FROM Supplier
+INNER JOIN SupplierProduct
+ON Supplier.sup_id  = SupplierProduct.sup_id
+ORDER BY quantity_received DESC;
+
+SELECT cust_id,
+COUNT(*)
+FROM Order_Detail
+GROUP BY cust_id
+ORDER BY COUNT (*) DESC;
+
+UPDATE SupplierProduct
+SET quantity_received =  quantity_received + 2500, sup_transactionDate = '01-JUN-2020'
+WHERE sup_id = 401;
+
+
+SELECT E2.emp_fname
+FROM Employee E1, Employee E2
+WHERE E1.emp_fname = 'Henry' AND E1.dep_id = E2.dep_id;
+
+SELECT * FROM Employee 
+WHERE emp_hireDate  < =  DATE '2019-01-01';
+
+
+SELECT sup_id, sup_name, street_name, state_name 
+FROM Supplier sup, Address address 
+WHERE sup.sup_id is not NUll and address.address_id =  sup.address_id(+) 
+ORDER BY sup_id;
+
+SELECT COUNT(cust_id), cust_last 
+FROM Customer 
+GROUP BY cust_last;
+
+
+SELECT dep_id,
+AVG (unit_list_price) AS Avg_Price
+FROM Product
+GROUP BY dep_id
+ORDER BY Avg_Price DESC;
+
+SELECT cust_fname, cust_last, order_id
+FROM Customer, Order_Detail
+WHERE Customer.cust_id = Order_Detail.cust_id;
+
+SELECT product_name, quantity_sold
+FROM Product p, Sale_Info s
+WHERE p.product_id = s.product_id and p.product_name = 'Doritos' 
+AND s.transaction_date = '01-JUN-2023';
+
+UPDATE Address
+SET street_name = '404 Forest Mill Rd'
+WHERE address_id = 206;
+
+
+--INSERT ADDRESS VALUES
+INSERT INTO Address VALUES(201, '13 Westfall', 'Maryland', 204);                          
+INSERT INTO Address VALUES(202, '20 Clinton Rd', 'New York', 302);
+INSERT INTO Address VALUES(203, '24 Monroe St', 'Florida', 412);
+INSERT INTO Address VALUES(204, '17 Cedar Run', 'Georgia', 319);
+INSERT INTO Address VALUES(205, '1522 Madison Ave', 'Maryland', 219);
+INSERT INTO Address VALUES(206, '9 Hills Run', 'Maryland', 443);
+INSERT INTO Address VALUES(207, '19 Adams Ave', 'Maryland', 240);
+INSERT INTO Address VALUES(208, '9 Queen St', 'Maryland', 240);
+INSERT INTO Address VALUES(209, '376 Honey Creek St', 'Maryland', 240);
+INSERT INTO Address VALUES(210, '8665 Adams Ave', 'Kentucky', 277);
+INSERT INTO Address VALUES(211, '86 Illinois Ave', 'Illinois', 309);
+INSERT INTO Address VALUES(212, '73 Cactus Ave', 'Maryland', 410);
+INSERT INTO Address VALUES(213, '116 Jolene St', 'Maryland', 443);
+INSERT INTO Address VALUES(214, '37 Cookie Blvd', 'California', 310);                        
+INSERT INTO Address VALUES(215, '9999 Madison Square Circle', 'Maryland', 763);    
+
+--INSERT CUSTOMER DATA
+INSERT INTO Customer VALUES(101, 201, 'Johnny', 'Depp', date '2005-03-15');
+INSERT INTO Customer VALUES(102, 204, 'Lilli', 'Rivera', date '2021-09-22'); 
+INSERT INTO Customer VALUES(103, 203, 'Liam', 'Harrington', date '2000-03-10');       
+INSERT INTO Customer VALUES(104, 214, 'Shaq', 'Oneal', date '1977-10-13');
+INSERT INTO Customer VALUES(105, 209, 'Amara', 'London', date '2002-08-17');
+
+
+--INSERT SUPPLIER DATA
+INSERT INTO Supplier VALUES(401, 201, 'Giant Food', '555-242-1222', '242-444-5422', 'Snack');
+INSERT INTO Supplier VALUES(402, 210, 'Safe Way', '277-244-9900', '277-418-5555', 'Sodas');     
+INSERT INTO Supplier VALUES(403, 211, 'Bare Foot', '309-972-1112', '309-884-5422', 'Wine');     
+INSERT INTO Supplier VALUES(404, 212, 'Amazon Fresh', '410-778-2310', '410-496-6999', 'Produce');     
+INSERT INTO Supplier VALUES(405, 213, 'Restaurant Depot', '443-892-2111', '443-404-6262', 'Meats'); 
+
+--INSERT DEPARTMENT DATA
+INSERT INTO Department VALUES(601, 'Snacks and Soft Drinks', 'cookies, baked goods, jerky, dehydrated fruit, popcorn, granola, crackers, fruit juice, colas, water, iced teas, etc.');    
+INSERT INTO Department VALUES(602, 'Vegetables and Fruits',  'leafy greens, cruciferous, marrow, root(potato etc), edible plant stem, allium, apples, citrus, stone fruit, tropical, exotic, berries, melons, etc.'); 
+INSERT INTO Department VALUES(603, 'Beer and Wine', 'ale, lager, lambic, red wine, white wine, rosé wine,sparkling wine, etc.'); 
+INSERT INTO Department VALUES(604, 'Meat and Fish', 'red meat, pork, beef, lamb, and goat, poultry, turkey, chicken, sea food, fish, lobster, crab, and mollusks');
+INSERT INTO Department VALUES(605, 'Frozen Products', 'frozen meals, ice cream, frozen pizzas, frozen rolls and wraps, etc.'); 
+
+--INSERT EMPLOYEE DATA
+INSERT INTO Employee VALUES(301, 201, 601, 'Henry', 'Brown', 'hbrown@gmail.com', '09-JUN-1970', '01-JAN-2020');
+INSERT INTO Employee VALUES(302, 205, 601, 'Kaitlyn', 'Wong', 'kwong@msn.com', '10-JAN-1985', '13-SEP-2018');
+INSERT INTO Employee VALUES(303, 206, 602, 'Jennifer', 'Carter', 'jcarter@yahoo.com', '05-JULY-1982', '01-OCT-2019');    
+INSERT INTO Employee VALUES(304, 207, 602, 'Amber', 'Rose', 'arose@gmail.com', '16-MAR-1994', '05-JUN-2003');
+INSERT INTO Employee VALUES(305, 208, 605, 'Justin', 'Timberlake', 'jtimberlake@gmail.com', '16-MAR-1989', '17-JAN-2022');
+
+--INSERT PRODUCT DATA
+INSERT INTO Product VALUES(501, 601,  401, 'Doritos', 5.99, 2500);    
+INSERT INTO Product VALUES(502, 602,  404, 'Granny Smith', 0.99, 1000);    
+INSERT INTO Product VALUES(503, 603,  403, 'Volcanic Merlot', 75.95, 500);    
+INSERT INTO Product VALUES(504, 604,  405, 'Blue Crab', 30.99, 370);  
+INSERT INTO Product VALUES(505, 605,  405, 'Chicken Tenders', 15.99, 2000); 
+
+--INSERT ORDER_DETAILS DATA
+INSERT INTO Order_Detail VALUES(10, 101, 301, 501, 15.11, '01-JAN-2001');    
+INSERT INTO Order_Detail VALUES(11, 102, 302, 502, 15.15, '01-JAN-2001');
+INSERT INTO Order_Detail VALUES(12, 103, 303, 503, 80.00, '03-FEB-2001');
+INSERT INTO Order_Detail VALUES(13, 104, 304, 504, 65.59, '10-FEB-2001');
+INSERT INTO Order_Detail VALUES(14, 105, 305, 505, 47.97, '15-MAR-2001');
+INSERT INTO Order_Detail VALUES(15, 105, 305, 505, 47.97, '10-JUN-2001');
+INSERT INTO Order_Detail VALUES(16, 101, 301, 502, 15.15, '24-AUG-2002');  
+INSERT INTO Order_Detail VALUES(17, 101, 303, 505, 15.99, '06-SEP-2022');
+
+--INSERT SALE_INFO DATA
+INSERT INTO Sale_Info VALUES(10, 501, 500, '01-JUN-2023');   
+INSERT INTO Sale_Info VALUES(11, 502, 500, '01-JUN-2023');  
+INSERT INTO Sale_Info VALUES(12, 503, 350, '13-JUN-2023');
+INSERT INTO Sale_Info VALUES(13, 504, 500, '14-JUN-2023');
+INSERT INTO Sale_Info VALUES(14, 505, 610, '20-JUN-2023');
+INSERT INTO Sale_Info VALUES(15, 501, 610, '20-JUN-2023');
+
+--INSER SUPPLIERPRODUCT DATA
+INSERT INTO SupplierProduct VALUES(401, 501, 1500, 'Chips', '21-FEB-2020');  
+INSERT INTO SupplierProduct VALUES(402, 502, 5500, 'Green Apple', '21-FEB-2020');  
+INSERT INTO SupplierProduct VALUES(403, 503, 5000, 'Red Wine', '18-MAR-2020');
+INSERT INTO SupplierProduct VALUES(405, 504, 3400, 'Blue Crab', '01-APR-2020');
